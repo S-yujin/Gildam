@@ -1,7 +1,7 @@
 # Gildom
 
 참여 공모전: [부산테크노파크 Big Data 활용 대회](https://www.dxchallenge.co.kr/events/bigdataanalysis2025)  
-&nbsp;&nbsp;&nbsp;부울경 ICT 아이디어 경진대회?
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;부울경 ICT 아이디어 경진대회?
 
 ### 주제: 길 위의 부산 이야기 (부산 여행 중 지역에 대한 스토리를 자동으로 작성하는 앱 개발)
 이유: 대부분의 여행 지역이나 앱은 타인의 블로그나 SNS에 의존함.   
