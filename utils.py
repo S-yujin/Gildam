@@ -1,8 +1,11 @@
+# 데이터 처리 유틸리티 함수 모음
 import pandas as pd
 
+# CSV 파일을 DataFrame으로 로드
 def load_destinations(filepath: str) -> pd.DataFrame:
     return pd.read_csv(filepath)
 
+# 여행지 데이터를 프롬프트 형식에 맞춰 문자열로 변환
 def format_data_for_prompt(df: pd.DataFrame) -> str:
     lines = []
     for _, row in df.iterrows():
