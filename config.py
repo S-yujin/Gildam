@@ -1,2 +1,7 @@
-# 환경 변수에서 API 키를 가져오는 설정 파일
-GEMINI_API_KEY = "AIzaSyCdNEXC14soYjpbZKyE059qbFBE9uhfPgY"
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+GOOGLE_PLACES_API_KEY = os.getenv("GOOGLE_API_KEY")

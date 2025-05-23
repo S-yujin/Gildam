@@ -6,7 +6,7 @@ def render_map(selected_places, csv_path="data/busan_spots.cvs"):
     from streamlit_folium import folium_static
     from folium.plugins import MarkerCluster
 
-    df = pd.read_csv(cvs_path)
+    df = pd.read_csv(csv_path)
     df = df[df["여행지"].isin(selected_places)]
     df[["lat","lon"]] = df[["위도","경도"]]
     
