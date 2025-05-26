@@ -66,10 +66,16 @@ if raw_response:
 
 # 선택한 여행지 지도 보기
 if selected_places:
-    st.markdown("### 선택한 여행지:")
-    for place in selected_places:
-        st.markdown(f"- {place}")
+    # 2개의 열로 나누기 (왼쪽: 지도 / 오른쪽: 챗봇)
+    col1, col2 = st.columns([1, 2])  # 비율 조절 가능
+    
+    with col1:
+        st.markdown("### 선택한 여행지:")
+        for place in selected_places:
+            st.markdown(f"- {place}")
 
-    if st.button("🗺 선택한 여행지 지도에 보기"):
+    with col2:
+    # if st.button("🗺 선택한 여행지 지도에 보기"):
         st.markdown("#### 여행지 지도")
         render_map(selected_places, csv_path=csv_path)
+        
