@@ -1,16 +1,14 @@
-# 데이터 처리 유틸리티 함수 모음
 import pandas as pd
 import requests
-import os
-import googletrans
 from googletrans import Translator
+import streamlit as st
 from config import GOOGLE_PLACES_API_KEY
 
-# CSV 파일을 DataFrame으로 로드
+# CSV 파일 로딩
 def load_destinations(filepath: str) -> pd.DataFrame:
     return pd.read_csv(filepath)
 
-# 여행지 데이터를 프롬프트 형식에 맞춰 문자열로 변환
+# Gemini 프롬프트용 문자열 구성
 def format_data_for_prompt(df: pd.DataFrame) -> str:
     lines = []
     for _, row in df.iterrows():
@@ -20,8 +18,10 @@ def format_data_for_prompt(df: pd.DataFrame) -> str:
         lines.append(f"장소명: {place}, 제목: {title}, 부제목: {subtitle}")
     return "\n".join(lines)
 
+# Google 리뷰 및 평점 조회 함수 (번역 포함, 캐시 사용)
 translator = Translator()
 
+@st.cache_data(show_spinner=False)
 def get_place_rating_and_review(place_name: str, location: str = "Busan, South Korea") -> dict:
     search_url = "https://maps.googleapis.com/maps/api/place/textsearch/json"
     params = {
@@ -45,19 +45,14 @@ def get_place_rating_and_review(place_name: str, location: str = "Busan, South K
     detail_res = requests.get(details_url, params=detail_params)
     detail_json = detail_res.json().get("result", {})
 
-    # 평점
     rating = detail_json.get("rating", "N/A")
-
-    # 리뷰 2개 추출, 한국어로 번역 및 요약
     reviews_raw = detail_json.get("reviews", [])[:2]
     reviews_translated = []
 
     for review in reviews_raw:
         text = review.get("text", "")
         if text:
-            # 번역 (영어 → 한국어)
-            translated = translator.translate(text, dest='ko').text
-            # 간단히 100자 이내로 요약
+            translated = translator.translate(text, dest="ko").text
             if len(translated) > 100:
                 translated = translated[:100] + "..."
             reviews_translated.append(translated)
