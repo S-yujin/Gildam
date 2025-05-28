@@ -1,0 +1,44 @@
+<!-- templates/ui_template.html -->
+<style>
+.container {
+  display: flex;
+  height: 90vh;
+  overflow: hidden;
+}
+.left-panel {
+  width: 50%;
+  overflow-y: auto;
+  padding: 10px;
+  border-right: 1px solid #ccc;
+  background-color: #fefefe;
+}
+.right-panel {
+  width: 50%;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  padding: 10px;
+  background: #f7f7f7;
+}
+.card {
+  margin-bottom: 10px;
+  border-bottom: 1px solid #eee;
+  padding: 10px;
+  background-color: white;
+  border-radius: 6px;
+}
+</style>
+
+<div class="container">
+  <div class="left-panel">
+    {{cards_html}}
+  </div>
+  <div class="right-panel">
+    <h4>🗺 이동 경로 지도</h4>
+    <iframe srcdoc="{{map_html}}" width="100%" height="600px" frameborder="0"></iframe>
+    <h4>✅ 선택한 장소</h4>
+    <ul>
+      {{selected_list_html}}
+    </ul>
+  </div>
+</div>

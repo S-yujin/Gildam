@@ -5,6 +5,7 @@ from utils import load_destinations
 import folium
 import re
 from folium import PolyLine
+from pathlib import Path
 
 st.set_page_config(page_title="MYRO 스타일 부산 여행지 추천", layout="wide")
 st.title("MYRO 스타일 부산 여행 플래너")
@@ -33,7 +34,7 @@ if st.button("여행지 추천 받기") and user_input.strip():
 raw_response = st.session_state.get("raw_response", "")
 selected_places = st.session_state["selected_places"]
 
-# 장소명 추출 함수
+# 장소명 추출
 def extract_places(text):
     return [p.strip() for p in re.split(r"[\n,\d.\-•]+", text) if len(p.strip()) >= 2 and re.search(r"[가-힣]", p)]
 
@@ -45,7 +46,7 @@ if raw_response:
     response_list = extract_places(raw_response)
     recommendations = df[df["여행지"].isin(response_list)].to_dict(orient="records")
 
-    # 마커 표시 + 경로 그리기
+    # 이동 경로 경로 표시
     selected_info = [r for r in recommendations if r["여행지"] in selected_places]
     if selected_info:
         chunk_size = max(1, len(selected_info) // days)
@@ -61,3 +62,38 @@ if raw_response:
             folium.Marker([p["위도"], p["경도"]], popup=p["여행지"]).add_to(m)
 
 map_html = m.get_root().render().replace('"', '&quot;').replace("'", "&apos;")
+
+# 카드 UI 생성
+cards_html = ""
+for place in recommendations:
+    place_name = place['여행지']
+    selected = "✅ 선택됨" if place_name in selected_places else "☐ 선택 안됨"
+    cards_html += f"""
+    <div class="card">
+      <h4>{place_name}</h4>
+      <p>{place['제목']} - {place['부제목']}</p>
+      <img src="{place['썸네일이미지URL']}" width="150"><br>
+      <p><b>{selected}</b></p>
+    </div>
+    """
+
+# 선택 목록 HTML
+selected_list_html = "".join([f"<li>{p}</li>" for p in selected_places])
+
+# 템플릿 로딩 및 바인딩
+template_path = Path("templates/ui_template.html")
+template = template_path.read_text(encoding="utf-8")
+
+rendered_html = template.replace("{{cards_html}}", cards_html)\
+                        .replace("{{map_html}}", map_html)\
+                        .replace("{{selected_list_html}}", selected_list_html)
+
+# 선택 박스 - Streamlit 상단에서 실제 선택 가능
+st.session_state["selected_places"] = st.multiselect(
+    "✔️ 지도에 표시할 장소 선택",
+    options=[p["여행지"] for p in recommendations],
+    default=selected_places
+)
+
+# HTML 렌더링
+html(rendered_html, height=900)
