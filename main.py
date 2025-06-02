@@ -1,123 +1,157 @@
 import streamlit as st
-from streamlit.components.v1 import html
-from recommender import recommend_travel_places
-from utils import load_destinations
-import folium
 import re
-from folium import PolyLine
+import folium
+from streamlit_folium import st_folium
+from recommender import recommend_travel_places
+from utils import (
+    load_destinations,
+    get_place_rating_and_review,
+    generate_reason_llm
+)
 
-st.set_page_config(page_title="MYRO 스타일 부산 여행지 추천", layout="wide")
+st.set_page_config(page_title="MYRO 부산 여행지 추천", layout="wide")
 st.title("MYRO 스타일 부산 여행 플래너")
-st.markdown("여행 스타일, 인원수, 일정 등을 입력하면 맞춤 여행지를 추천해드립니다.")
 
 csv_path = "data/busan_spots.csv"
 df = load_destinations(csv_path)
 
 user_input = st.text_area("✍️ 여행 스타일 입력", height=100)
-days = st.slider("여행 일수 (1박 2일 → 2일)", min_value=1, max_value=5, value=2)
+days = st.slider("여행 일수", 1, 5, 2)
 
 if "raw_response" not in st.session_state:
     st.session_state["raw_response"] = ""
-if "selected_places" not in st.session_state:
-    st.session_state["selected_places"] = []
+if "selected" not in st.session_state:
+    st.session_state["selected"] = set()
+if "reasons" not in st.session_state:
+    st.session_state["reasons"] = {}
 
 if st.button("여행지 추천 받기") and user_input.strip():
-    with st.spinner("추천 여행지를 찾는 중입니다..."):
-        raw_response = recommend_travel_places(user_input, csv_path)
-        st.session_state["raw_response"] = raw_response
-        st.session_state["selected_places"] = []
-
-raw_response = st.session_state.get("raw_response", "")
-selected_places = st.session_state["selected_places"]
+    with st.spinner("추천 중입니다..."):
+        st.session_state["raw_response"] = recommend_travel_places(user_input, csv_path)
+        st.session_state["selected"] = set()
+        st.session_state["reasons"] = {}
 
 def extract_places(text):
-    return [p.strip() for p in re.split(r"[\n,\d.\-•]+", text) if len(p.strip()) >= 2 and re.search(r"[가-힣]", p)]
+    lines = re.split(r"[\n,]", text)
+    cleaned = [re.sub(r"^[\s\-\u2022\d.\u2460-\u2473]*", "", line).strip() for line in lines]
+    return [p for p in cleaned if p and re.search(r"[\uac00-\ud7a3]", p)]
 
-m = folium.Map(location=[35.1796, 129.0756], zoom_start=11)
+def fuzzy_match_places(response, df):
+    extracted = extract_places(response)
+    matched = []
+    for place in df["여행지"]:
+        for line in extracted:
+            if place in line:
+                matched.append(place)
+                break
+    return matched
 
+raw_response = st.session_state["raw_response"]
 recommendations = []
 if raw_response:
-    response_list = extract_places(raw_response)
-    recommendations = df[df["여행지"].isin(response_list)].to_dict(orient="records")
+    matched_names = fuzzy_match_places(raw_response, df)
+    recommendations = df[df["여행지"].isin(matched_names)].to_dict(orient="records")
 
-    selected_info = [r for r in recommendations if r["여행지"] in selected_places]
-    if selected_info:
-        chunk_size = max(1, len(selected_info) // days)
-        colors = ["red", "blue", "green", "purple", "orange"]
+def render_map_per_day(selected_info, days, mode="all"):
+    m = folium.Map(location=[35.1796, 129.0756], zoom_start=12)
+    if not selected_info:
+        return m
 
-        for i in range(0, len(selected_info), chunk_size):
-            chunk = selected_info[i:i + chunk_size]
-            coords = [(p["위도"], p["경도"]) for p in chunk]
-            PolyLine(locations=coords, color=colors[i // chunk_size % len(colors)],
-                     weight=5, opacity=0.7).add_to(m)
+    chunk_size = max(1, len(selected_info) // days)
+    chunks = [selected_info[i:i + chunk_size] for i in range(0, len(selected_info), chunk_size)]
+    colors = ["red", "blue", "green", "purple", "orange"]
 
-        for p in selected_info:
-            folium.Marker([p["위도"], p["경도"]], popup=p["여행지"]).add_to(m)
+    for day_idx, chunk in enumerate(chunks):
+        if mode != "all" and mode != f"day{day_idx+1}":
+            continue
 
-map_html = m.get_root().render().replace('"', '&quot;').replace("'", "&apos;")
+        coords = [(p["위도"], p["경도"]) for p in chunk]
+        folium.PolyLine(
+            locations=coords,
+            color=colors[day_idx % len(colors)],
+            weight=5,
+            opacity=0.8,
+            tooltip=f"{day_idx+1}일차 경로"
+        ).add_to(m)
 
-html_code = f"""
-<style>
-.container {{
-  display: flex;
-  height: 90vh;
-  overflow: hidden;
-}}
-.left-panel {{
-  width: 50%;
-  overflow-y: auto;
-  padding: 10px;
-  border-right: 1px solid #ccc;
-  background-color: #fefefe;
-}}
-.right-panel {{
-  width: 50%;
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  padding: 10px;
-  background: #f7f7f7;
-}}
-.card {{
-  margin-bottom: 10px;
-  border-bottom: 1px solid #eee;
-  padding: 10px;
-  background-color: white;
-  border-radius: 6px;
-}}
-</style>
+        for idx, p in enumerate(chunk, 1):
+            place = p["여행지"]
+            title = p["제목"]
+            subtitle = p["부제목"]
+            popup_html = f"<b>{place}</b><br>{title}<br>{subtitle}"
 
-<div class="container">
-  <div class="left-panel">
-"""
+            folium.Marker(
+                location=[p["위도"], p["경도"]],
+                popup=popup_html,
+                tooltip=f"{day_idx+1}일차 - {place}"
+            ).add_to(m)
 
-for place in recommendations:
-    place_name = place['여행지']
-    html_code += f"""
-    <div class="card">
-      <h4>{place_name}</h4>
-      <p>{place['제목']} - {place['부제목']}</p>
-      <img src="{place['썸네일이미지URL']}" width="150"><br>
-    </div>
-    """
+    return m
 
-html_code += f"""
-  </div>
-  <div class="right-panel">
-    <h4>🗺 이동 경로 지도</h4>
-    <iframe srcdoc="{map_html}" width="100%" height="600px" frameborder="0"></iframe>
-    <h4>✅ 선택한 장소</h4>
-    <ul>
-      {''.join([f"<li>{p}</li>" for p in selected_places])}
-    </ul>
-  </div>
-</div>
-"""
 
-st.session_state["selected_places"] = st.multiselect(
-    "✔️ 지도에 표시할 장소 선택",
-    options=[p["여행지"] for p in recommendations],
-    default=selected_places
-)
+st.markdown("""
+    <style>
+    .recommend-card {
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 10px;
+        margin-bottom: 15px;
+        background-color: #f9f9f9;
+        box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+    }
+    </style>
+""", unsafe_allow_html=True)
 
-html(html_code, height=900)
+left_col, right_col = st.columns([1, 1], gap="large")
+
+with left_col:
+    st.subheader("📋 추천 여행지")
+    for idx, p in enumerate(recommendations):
+        st.markdown('<div class="recommend-card">', unsafe_allow_html=True)
+        col1, col2 = st.columns([1, 3])
+        with col1:
+            st.image(p["썸네일이미지URL"], width=100)
+        with col2:
+            place = p["여행지"]
+            title = p["제목"]
+            subtitle = p["부제목"]
+            st.markdown(f"**{place}**")
+
+            if place not in st.session_state["reasons"]:
+                with st.spinner("추천 이유 생성 중..."):
+                    st.session_state["reasons"][place] = generate_reason_llm(title, subtitle)
+
+            reason = st.session_state["reasons"].get(place, "")
+            st.markdown(f"💡 **추천 이유**: {reason}")
+
+            review_data = get_place_rating_and_review(place)
+            st.markdown(f"⭐ **평점**: {review_data['rating']}")
+            if review_data["reviews"]:
+                st.markdown(f"🗣 **리뷰**: {review_data['reviews'][0]}")
+            checked = st.checkbox("지도에 표시", key=f"{place}_{idx}",
+                                  value=place in st.session_state["selected"])
+            if checked:
+                st.session_state["selected"].add(place)
+            else:
+                st.session_state["selected"].discard(place)
+        st.markdown('</div>', unsafe_allow_html=True)
+
+with right_col:
+    st.subheader("🗺 지도에서 확인")
+    selected_info = [r for r in recommendations if r["여행지"] in st.session_state["selected"]]
+
+    if days == 1:
+        map_obj = render_map_per_day(selected_info, days=1, mode="all")
+        st_folium(map_obj, width=700, height=600, key="map_all_single_day")
+    else:
+        tab_labels = ["전체"] + [f"{i+1}일차" for i in range(days)]
+        tabs = st.tabs(tab_labels)
+
+        with tabs[0]:
+            map_obj = render_map_per_day(selected_info, days=days, mode="all")
+            st_folium(map_obj, width=700, height=600, key="map_all")
+
+        for i in range(1, days + 1):
+            with tabs[i]:
+                map_obj = render_map_per_day(selected_info, days=days, mode=f"day{i}")
+                st_folium(map_obj, width=700, height=600, key=f"map_day_{i}")
