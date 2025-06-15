@@ -10,8 +10,8 @@ from utils import (
 )
 
 # 페이지 설정
-st.set_page_config(page_title="MYRO 부산 여행지 추천", layout="wide")
-st.title("MYRO 스타일 부산 여행 플래너")
+st.set_page_config(page_title="부산 여행지 추천", layout="wide")
+st.title("스타일 부산 여행 플래너")
 
 # 데이터 로드
 csv_path = "data/busan_spots.csv"
