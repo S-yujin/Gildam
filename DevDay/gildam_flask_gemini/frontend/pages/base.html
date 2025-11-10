@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ title or 'GILDAM' }}</title>
+<link rel="stylesheet" href="{{ url_for('static_asset', path='css/design.css') }}">
+</head><body>
+<div class="nav"><div class="container">
+  <a href="{{ url_for('home') }}" class="{{ 'active' if active=='home' else '' }}">홈</a>
+  <a href="{{ url_for('explore') }}" class="{{ 'active' if active=='explore' else '' }}">탐색</a>
+  <a href="{{ url_for('map_page') }}" class="{{ 'active' if active=='map' else '' }}">지도</a>
+  <a href="{{ url_for('about') }}" class="{{ 'active' if active=='about' else '' }}">소개</a>
+</div></div>
+<main class="container">{% block content %}{% endblock %}</main>
+<div class="footer container"><small>© 2025 GILDAM — Flask multipage</small></div>
+</body></html>

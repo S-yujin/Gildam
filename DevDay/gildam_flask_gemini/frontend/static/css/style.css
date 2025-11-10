@@ -1,0 +1,220 @@
+:root{
+  --bg:#ffffff;
+  --text:#0a0a0a;
+  --muted:#6b7280;
+  --panel:#ffffff;
+  --border:#e5e7eb;
+  --radius:16px;
+  --accent:#0ea5e9;
+  --btn:#0a0a0a;
+
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans KR",Arial,sans-serif;
+}
+
+/* 기본 */
+html,body{margin:0;background:var(--bg);color:var(--text)}
+main{max-width:1200px;margin:48px auto;padding:0 24px}
+
+/* 헤더/푸터(라이트) */
+header,footer{padding:16px 24px;background:#fff;border-bottom:1px solid var(--border)}
+footer{border-top:1px solid var(--border);border-bottom:none;color:var(--muted)}
+h1{margin:0;font-size:1.2rem}
+
+/* 폼/그리드 */
+.controls{display:flex;flex-direction:column;gap:12px}
+.grid{display:grid;gap:18px;grid-template-columns:repeat(3,1fr)}
+.field{display:flex;flex-direction:column;gap:6px}
+textarea,
+select,
+input[type="date"]{
+  background:#fff;color:var(--text);
+  border:1px solid var(--border);border-radius:12px;padding:10px;min-height:44px
+}
+
+/* 버튼 (블랙 프라이머리) */
+button{
+  background:var(--btn);color:#fff;border:1px solid #000;
+  padding:18px 22px; border-radius:12px; cursor:pointer; font-weight:700; width:max-content
+}
+button:hover{background-color: var(--accent); border-color: var(--accent);}
+
+/* 결과/카드 */
+.results{margin-top:24px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.card{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:16px;padding:18px;box-shadow:0 16px 40px rgba(0,0,0,.06)
+}
+.card h3{margin:0 0 8px 0;font-size:1.05rem}
+.meta{font-size:.92rem;color:var(--muted);margin-bottom:6px}
+.score{font-weight:800}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.tag{background:#f3f4f6;border:1px solid var(--border);padding:4px 10px;border-radius:999px;font-size:.85rem;color:#374151}
+.hint{color:var(--muted);font-size:.95rem}
+
+/* 반응형 */
+@media (max-width:960px){ .grid{grid-template-columns:1fr} }
+
+/* ===== Hero (MYRO-like) ===== */
+.hero--myro{
+  display:grid;gap:40px;grid-template-columns:1.1fr .9fr;align-items:center;
+  padding:80px 24px;border:1px solid var(--border);background:#fff;border-radius:24px
+}
+.hero__title{
+  font-size:56px;line-height:1.08;letter-spacing:-.02em;
+  margin:0 0 18px 0;color:#0b0b0b;font-weight:900
+}
+.hero__subtitle{color:var(--muted);margin:0 0 22px 0;font-size:18px}
+.accent{color:var(--accent);font-weight:900}
+
+/* 히어로 폼/칩/액션 */
+.hero__search{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+.hero__input{height:48px}
+.chip-row{display:flex;flex-wrap:wrap;gap:10px}
+.chip{
+  background:#fff;color:#111;border:1px solid var(--border);
+  border-radius:999px;padding:8px 12px;cursor:pointer;font-weight:600
+}
+.chip.on{outline:2px solid #2563eb;color:#111;background:#eef2ff}
+.hero__actions{display:flex;gap:12px;margin-top:6px}
+.badges{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap}
+.pill{background:#f3f4f6;border:1px solid var(--border);padding:6px 10px;border-radius:999px;color:#374151}
+
+/* 히어로 오른쪽 모형(밝은 카드 + 그림자) */
+.phone-card{
+  width:100%;max-width:420px;margin-left:auto;
+  background:#fff;border:1px solid var(--border);border-radius:24px;padding:16px;
+  box-shadow:0 24px 60px rgba(0,0,0,.08),0 8px 20px rgba(0,0,0,.06)
+}
+.phone-head,.phone-bottom{height:12px;background:#f3f4f6;border-radius:999px;opacity:.8}
+.phone-screen{height:320px;margin:12px 0;border-radius:18px;background:#f9fafb;padding:14px;border:1px dashed var(--border)}
+.demo-list{margin:0;padding-left:18px;color:#111}
+
+/* 섹션 */
+.section{margin-top:56px}
+.section__title{margin:0 0 18px 0;font-size:28px}
+.howitworks .card,.benefits .card{min-height:140px}
+.step{
+  width:36px;height:36px;border-radius:50%;background:#111;color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:900;margin-bottom:10px
+}
+
+/* CTA 박스 */
+.cta .cta__box{
+  border:1px solid var(--border);background:#fff;border-radius:20px;
+  padding:22px;display:flex;align-items:center;justify-content:space-between;gap:16px;
+  box-shadow:0 10px 30px rgba(0,0,0,.05)
+}
+
+/* 모바일 */
+@media (max-width:1080px){
+  .hero--myro{grid-template-columns:1fr;padding:56px 20px}
+  .hero__title{font-size:44px}
+  .cta .cta__box{flex-direction:column;align-items:flex-start}
+}
+
+/* ===== Nav: logo left, links right + hover color ===== */
+.nav{
+  position: sticky; top: 0; z-index: 50;
+  background: #fff; border-bottom: 1px solid var(--border);
+}
+.nav-inner{
+   height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; 
+  padding: 0 40px; 
+}
+.brand { display: inline-flex; align-items: center; }
+.brand-logo { max-height: 50px; height: auto; width: auto; display: block; }
+
+.nav-links{              
+  display: flex; gap: 28px;
+}
+.nav-links a{
+  color: #111827; font-weight: 600;
+  transition: color .15s ease;       
+  text-decoration: none;
+}
+.nav-links a:hover{
+  color: var(--accent);
+}
+
+
+
+/* == 감정 입력 폼 ==*/
+.textarea {
+  width: 100%;
+  box-sizing: border-box; 
+  min-height: 120px;
+  padding: 12px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 15px;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+
+/* == 체크박스 박스 가리기용 == */
+/* === 감정 선택 pill-style 체크박스 === */
+
+/* === Emotion list: 3 x 2 grid === */
+.emotion-box .emotion-list{
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: 16px;   /* 가로 간격 ↑ */
+  row-gap: 12px;      /* 세로 간격 */
+  justify-items: stretch;
+}
+
+/* 라벨은 컨테이너 역할만: 테두리/패딩 제거 (겹침 원인 제거) */
+.emotion-box .emotion-item{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  border-radius: 0;
+}
+
+/* pill만 스타일 적용 */
+.emotion-box .emotion-item > .pill{
+  box-sizing: border-box;        /* 테두리 포함 폭 계산 */
+  width: 100%;                   /* 셀 가로 꽉 채움 */
+  text-align: center;
+  white-space: nowrap;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: #fff;
+  color: #111;
+  font-weight: 600;
+  font-size: 14px;
+  transition: background .15s ease, color .15s ease, border-color .15s ease,
+              transform .02s ease;
+}
+
+/* 기본 체크박스 숨김 */
+.emotion-box .emotion-item > input{
+  position: absolute;
+  opacity: 0;
+  width: 0; height: 0;
+  pointer-events: none;
+}
+
+/* hover / active */
+.emotion-box .emotion-item:hover > .pill{ background:#f9fafb; }
+.emotion-box .emotion-item:active > .pill{ transform:translateY(1px); }
+
+/* 선택 시 반전 */
+.emotion-box .emotion-item > input:checked + .pill{
+  background: var(--btn);
+  color: #fff;
+  border-color: var(--btn);
+}
+
+

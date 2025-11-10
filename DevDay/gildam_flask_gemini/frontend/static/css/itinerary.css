@@ -1,0 +1,342 @@
+.itinerary-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+/* 로딩 */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  text-align: center;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #f3f4f6;
+  border-top-color: #111;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* 컨텐츠 레이아웃 */
+.content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.itinerary-left, .itinerary-right {
+  min-height: 600px;
+}
+
+/* 탭 */
+.tabs {
+  display: flex;
+  flex-wrap: wrap;   
+  gap: 8px 10px;
+  margin: 16px 0;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 8px;
+  overflow: visible !important;  
+  -ms-overflow-style: none;       /* IE/Edge 내 스크롤바 제거 안전장치 */
+  scrollbar-width: none;          /* Firefox */
+}
+
+.tab {
+  background: transparent;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px 8px 0 0;
+  cursor: pointer;
+  font-weight: 600;
+  color: #6b7280;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.tab:hover {
+  background: #f9fafb;
+  color: #111;
+}
+
+.tab.active {
+  background: #111;
+  color: #fff;
+}
+
+/* 일정 리스트 */
+.schedule {
+  overflow-y: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none;
+  padding-right: 8px;
+}
+
+.day-section {
+  margin-bottom: 24px;
+}
+
+.day-header {
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 12px;
+  color: #111;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.day-date {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.place-item {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  position: relative;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.place-item:hover {
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transform: translateY(-2px);
+}
+
+.place-item.active {
+  border-color: #111;
+  background: #fff;
+}
+
+.place-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 8px;
+}
+
+.place-name {
+  font-weight: 700;
+  font-size: 16px;
+  color: #111;
+  margin-bottom: 4px;
+}
+
+.place-time {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.place-category {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.category-식당 { background: #FFE5E5; color: #FF6B6B; }
+.category-카페 { background: #E0F7F4; color: #4ECDC4; }
+.category-관광지 { background: #E3F2FD; color: #45B7D1; }
+.category-체험 { background: #FFE4D6; color: #FFA07A; }
+.category-쇼핑 { background: #E8F5E9; color: #98D8C8; }
+
+.place-address {
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 6px;
+}
+
+.place-reason {
+  font-size: 14px;
+  color: #374151;
+  line-height: 1.5;
+}
+
+.travel-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed #e5e7eb;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.travel-info::before {
+  content: "🚗";
+}
+
+/* 지도 */
+.map-card {
+  position: sticky;
+  top: 100px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.map {
+  width: 100%;
+  height: 100%;
+  min-height: 600px;
+  border-radius: 16px;
+}
+
+.map-legend {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(10px);
+  padding: 12px 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.marker-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* 액션 */
+.actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* 반응형 */
+@media (max-width: 1080px) {
+  .content {
+    grid-template-columns: 1fr;
+  }
+  
+  .map-card {
+    position: relative;
+    top: 0;
+  }
+}
+
+/* 스크롤바 스타일 */
+.schedule::-webkit-scrollbar {
+  width: 6px;
+}
+
+.schedule::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.schedule::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.schedule::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* ==마커== */
+.custom-marker {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  background: #111;
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+/* 꼬리 */
+.custom-marker::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 14px solid #111;
+}
+
+/* 중앙 텍스트 */
+.custom-marker span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+/* 카테고리별 색상 적용 */
+.marker-식당 { background: #FF6B6B !important; }
+.marker-식당::after { border-top-color: #FF6B6B !important; }
+
+.marker-카페 { background: #4ECDC4 !important; }
+.marker-카페::after { border-top-color: #4ECDC4 !important; }
+
+.marker-관광지 { background: #45B7D1 !important; }
+.marker-관광지::after { border-top-color: #45B7D1 !important; }
+
+.marker-체험 { background: #FFA07A !important; }
+.marker-체험::after { border-top-color: #FFA07A !important; }
+
+.marker-쇼핑 { background: #98D8C8 !important; }
+.marker-쇼핑::after { border-top-color: #98D8C8 !important; }
+
+
+
+/* === 좌우 높이 동기화 준비 === */
+/* 왼쪽 카드가 지정 높이를 가지면 내부는 스크롤만 하도록 */
+.itinerary-left .card {
+  display: flex;
+  flex-direction: column;
+  height: auto;            /* JS가 실제 높이(px)를 주입 */
+}
+
+.tabs::-webkit-scrollbar { display: none; } /* 크롬류 */
+
+/* 탭 모양(선택) — pill 스타일 원하면 radius 수정 */
+.tab{
+  border-radius: 999px;   /* 원하면 기존처럼 8px 8px 0 0 유지해도 OK */
+}
+                
