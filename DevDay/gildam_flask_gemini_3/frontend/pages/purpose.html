@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>여행 목적/감정 입력 • GILDAM</title>
+
+  <link rel="icon" href="/static/img/Icon.png"/>
+  <link rel="stylesheet" href="/static/css/style.css" />
+  <style>
+    .hero { text-align:center; margin:48px 0 16px; }
+    .hero h1 { font-size:28px; font-weight:800; margin:0 0 8px; }
+    .hero p { color:#666; margin:0; }
+
+    .card {
+      max-width: 480px;
+      margin: 24px auto;
+      padding: 24px;
+      border-radius: 16px;
+      background: #fff;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+    }
+
+    .field-label { display:block; font-weight:600; margin-bottom:8px; text-align:left; }
+    .textarea {
+      width:100%;
+      min-height:120px;
+      padding:12px 14px;
+      border:1px solid #e5e7eb;
+      border-radius:12px;
+      font-size:15px;
+      line-height:1.5;
+      resize:vertical;
+    }
+
+    .emotion-box { margin-top:20px; }
+    .emotion-title { font-weight:700; margin-bottom:12px; text-align:center; }
+    .emotion-list {
+      display:flex; flex-wrap:wrap; justify-content:center; gap:8px;
+    }
+    .emotion-item {
+      display:flex; align-items:center; gap:4px;
+      border:1px solid #ddd;
+      border-radius:20px;
+      padding:6px 14px;
+      font-size:14px;
+      cursor:pointer;
+      transition:background .15s;
+    }
+    .emotion-item input { cursor:pointer; }
+    .emotion-item:hover { background:#f6f6f6; }
+
+    .meta { text-align:right; font-size:12px; color:#888; margin-top:6px; }
+
+    .actions { display:flex; gap:12px; margin-top:24px; }
+    .btn {
+      flex:1; display:inline-flex; align-items:center; justify-content:center;
+      height:44px; border-radius:12px; border:0; cursor:pointer;
+      font-weight:700; font-size:15px;
+      transition:transform .02s ease;
+    }
+    .btn:active { transform:translateY(1px); }
+
+    .btn-back { background:#111; color:#fff; }
+    .btn-next { background:#e5e7eb; color:#777; }
+    .btn-next.active { background:#111; color:#fff; }
+    .btn[disabled] { cursor:not-allowed; opacity:0.7; }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>여행 목적을 입력하세요</h1>
+      <p>여행의 목적과 현재 감정을 입력해주세요.</p>
+    </section>
+
+    <section class="card">
+      <form id="purposeForm" autocomplete="off">
+        <label for="purposeText" class="field-label">여행 목적</label>
+        <textarea id="purposeText" class="textarea" rows="5" cols="30"
+          placeholder="예: 바닷바람을 맞으며 혼자 힐링하고 싶어요."></textarea>
+        <div class="meta"><span id="charCount">0</span>/300</div>
+
+        <!-- ✅ 감정 선택 박스 -->
+        <div class="emotion-box">
+            <div class="emotion-title">현재 당신의 감정을 선택해주세요 (복수 선택 가능)</div>
+            <div class="emotion-list">
+            <label class="emotion-item"><input type="checkbox" value="차분"><span class="pill">차분</span></label>
+            <label class="emotion-item"><input type="checkbox" value="힐링"><span class="pill">힐링</span></label>
+            <label class="emotion-item"><input type="checkbox" value="로맨틱"><span class="pill">로맨틱</span></label>
+            <label class="emotion-item"><input type="checkbox" value="들뜸"><span class="pill">들뜸</span></label>
+            <label class="emotion-item"><input type="checkbox" value="활기"><span class="pill">활기</span></label>
+            <label class="emotion-item"><input type="checkbox" value="우울"><span class="pill">우울</span></label>
+            </div>
+        </div>
+
+
+        <div class="actions">
+          <button type="button" id="btnPurposeBack" class="btn btn-back">← 돌아가기</button>
+          <button type="submit" id="btnPurposeNext" class="btn btn-next" disabled>다음 단계로</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <script src="/static/js/purpose.js"></script>
+</body>
+</html>
