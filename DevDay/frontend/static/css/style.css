@@ -157,9 +157,9 @@ button:hover{background-color: var(--accent); border-color: var(--accent);}
 /* === Emotion list: 3 x 2 grid === */
 .emotion-box .emotion-list{
   display: grid !important;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  column-gap: 16px;   /* 가로 간격 ↑ */
-  row-gap: 12px;      /* 세로 간격 */
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: 14px;   /* 가로 간격 ↑ */
+  row-gap: 10px;      /* 세로 간격 */
   justify-items: stretch;
 }
 
